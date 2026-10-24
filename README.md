@@ -1,4 +1,4 @@
-# AI 手记 · Slow Notes
+# AI 手记 · AI SEA
 
 中文个人博客。文章以 Markdown 保存在 GitHub，通过 GitHub Actions 自动构建并发布到 https://ai-sea.github.io/ 。
 
