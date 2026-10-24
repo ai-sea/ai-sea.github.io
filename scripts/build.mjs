@@ -15,7 +15,7 @@ home=home.replace('__POSTS__',()=>JSON.stringify(index).replaceAll('<','\\u003c'
 home=home.replace('__COUNT__',String(Math.max(0,posts.length-1)).padStart(2,'0'));
 if(feature)home=home.replace('__FEATURE_URL__',feature.url).replace('__FEATURE_TITLE__',esc(feature.title)).replace('__FEATURE_DESC__',esc(feature.description)).replace('__FEATURE_META__',`${feature.date.replaceAll('-','.')} &nbsp; · &nbsp; ${feature.minutes} 分钟阅读`);
 else home=home.replace(/<a href="__FEATURE_URL__"[\s\S]*?<\/a>/,'');
-home=home.replace('</head>',`<link rel="canonical" href="${origin}/"><link rel="alternate" type="application/rss+xml" title="慢页 RSS" href="/feed.xml"></head>`);
+home=home.replace('</head>',`<link rel="canonical" href="${origin}/"><link rel="alternate" type="application/rss+xml" title="AI 手记 RSS" href="/feed.xml"></head>`);
 await fs.writeFile('dist/index.html',home);
 for(const p of posts){
  const dir='dist/posts/'+p.slug;await fs.mkdir(dir,{recursive:true});
@@ -25,6 +25,6 @@ for(const p of posts){
 await fs.writeFile('dist/feed.xml',`<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>${esc(config.title)}</title><link>${origin}/</link><description>${esc(config.description)}</description><language>zh-CN</language>${posts.map(p=>`<item><title>${esc(p.title)}</title><link>${origin}${p.url}</link><guid>${origin}${p.url}</guid><pubDate>${new Date(p.date+'T00:00:00+08:00').toUTCString()}</pubDate><description>${esc(p.description)}</description></item>`).join('')}</channel></rss>`);
 await fs.writeFile('dist/sitemap.xml',`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${origin}/</loc></url>${posts.map(p=>`<url><loc>${origin}${p.url}</loc><lastmod>${p.date}</lastmod></url>`).join('')}</urlset>`);
 await fs.writeFile('dist/robots.txt',`User-agent: *\nAllow: /\nSitemap: ${origin}/sitemap.xml\n`);
-await fs.writeFile('dist/404.html',`<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>页面未找到 · 慢页</title><link rel="stylesheet" href="/style.css"><main class="shell article"><h1>这一页还没有写下。</h1><p>文章可能已移动或删除。</p><a href="/">返回慢页首页 →</a></main></html>`);
+await fs.writeFile('dist/404.html',`<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>页面未找到 · AI 手记</title><link rel="stylesheet" href="/style.css"><main class="shell article"><h1>这篇技术笔记还没有写下。</h1><p>文章可能已移动或删除。</p><a href="/">返回AI 手记首页 →</a></main></html>`);
 await fs.writeFile('dist/.nojekyll','');
 console.log(`Built ${posts.length} articles at ${origin}`);

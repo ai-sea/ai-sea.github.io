@@ -8,7 +8,7 @@ export function parsePost(source,slug){
   const p=JSON.parse(match[1]);
   for(const field of ['title','category','date','description'])if(typeof p[field]!=='string'||!p[field].trim())throw Error('Invalid '+field+': '+slug);
   if(!/^\d{4}-\d{2}-\d{2}$/.test(p.date)||Number.isNaN(Date.parse(p.date)))throw Error('Invalid date: '+slug);
-  if(!['生活切片','设计思考','阅读笔记'].includes(p.category))throw Error('Unknown category: '+slug);
+  if(!['实践记录','技术解析','思考随笔'].includes(p.category))throw Error('Unknown category: '+slug);
   if(typeof p.draft!=='boolean'||typeof p.featured!=='boolean')throw Error('draft and featured must be booleans: '+slug);
   if(!Number.isInteger(p.minutes)||p.minutes<1)throw Error('Invalid minutes: '+slug);
   const html=sanitize(marked.parse(match[2]),{allowedTags:sanitize.defaults.allowedTags.concat(['img']),allowedAttributes:{...sanitize.defaults.allowedAttributes,img:['src','alt','title','width','height','loading']}});
