@@ -5,6 +5,7 @@
   "date": "2026-10-25",
   "description": "为什么还要做 Bots？我们希望探索一种持续存在的工作伙伴：跨越对话、工具和等待，记得来路，保有未完的责任，也能与其他 Bot 协商合作。",
   "minutes": 7,
+  "series": {"slug": "building-bots", "title": "从零构建 Bot", "order": 1},
   "featured": false,
   "draft": false
 }
@@ -133,3 +134,4 @@ Bot 可以调用一个代码工具，请一个研究工具找资料，或者与�
 关于已有探索，可参考 [Anthropic：长时间运行 Agent 的运行机制](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)与 [LangChain / LangGraph 官方文档入口](https://reference.langchain.com/)。它们分别讨论了跨上下文推进，以及持久执行、记忆等能力；本文的对照是对组织方式的讨论，不是对各产品最新功能的完整评测。
 
 写于 2026 年 10 月 25 日。
+

@@ -49,3 +49,20 @@ npm run preview
 打开 http://127.0.0.1:4173 。构建输出为 dist，亦可部署至 Cloudflare Pages（构建命令 npm run build，输出目录 dist）。GitHub Pages 的 Settings → Pages → Source 使用 GitHub Actions。无需数据库或额外密钥。
 
 src/index.html 为首页模板，src/style.css 为阅读页样式。site.json 为站点元数据。每篇文章都有独立静态页面，支持直接访问、站点地图与 RSS（/feed.xml）。公开部署文件只包括构建后的网页，不包含开发工具配置。
+
+## 文章系列
+
+系列独立于分类。一篇文章仍选择原有分类，可额外添加可选的 series 元数据：
+
+```json
+"series": {
+  "slug": "building-bots",
+  "title": "从零构建 Bot",
+  "order": 1
+}
+```
+
+同一系列使用相同 slug 和 title，order 为唯一的正整数，决定阅读顺序，与发布日期无关。slug 使用英文小写和短横线，决定系列网址，发布后保持稳定。不属于系列的文章省略整个 series 字段。
+
+网站自动生成 /series/ 总目录与 /series/building-bots/ 等系列目录页，文章内显示所属系列、展开目录和上一篇／下一篇。只有一篇时显示开篇与后续更新提示，不创建尚未发布的文章链接。草稿不进入目录或导航；序号允许有空缺。重复序号或同 slug 的标题不一致会让构建失败。系列目录会加入站点地图。
+

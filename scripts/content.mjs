@@ -11,6 +11,10 @@ export function parsePost(source,slug){
   if(!['实践记录','技术解析','思考随笔'].includes(p.category))throw Error('Unknown category: '+slug);
   if(typeof p.draft!=='boolean'||typeof p.featured!=='boolean')throw Error('draft and featured must be booleans: '+slug);
   if(!Number.isInteger(p.minutes)||p.minutes<1)throw Error('Invalid minutes: '+slug);
+  if(p.series!==undefined){
+    const s=p.series;
+    if(!s||typeof s!=='object'||Array.isArray(s)||typeof s.slug!=='string'||!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(s.slug)||typeof s.title!=='string'||!s.title.trim()||!Number.isSafeInteger(s.order)||s.order<1)throw Error('Invalid series: '+slug);
+  }
   const html=sanitize(marked.parse(match[2]),{allowedTags:sanitize.defaults.allowedTags.concat(['img']),allowedAttributes:{...sanitize.defaults.allowedAttributes,img:['src','alt','title','width','height','loading']}});
   return {...p,slug,html,url:'/posts/'+slug+'/',cat:p.category,time:p.minutes,desc:p.description,body:[html]};
 }
@@ -19,3 +23,18 @@ export function published(posts){
   if(result.filter(p=>p.featured).length>1)throw Error('Only one featured post is allowed');
   return result;
 }
+
+/** 仅用已发布文章生成系列，按显式序号排序并拒绝冲突。 */
+export function collectSeries(posts){
+  const groups=new Map();
+  for(const p of posts.filter(p=>!p.draft&&p.series)){
+    const s=p.series;
+    if(!groups.has(s.slug))groups.set(s.slug,{slug:s.slug,title:s.title,url:'/series/'+s.slug+'/',posts:[]});
+    const group=groups.get(s.slug);
+    if(group.title!==s.title)throw Error('Inconsistent series title: '+s.slug);
+    if(group.posts.some(x=>x.series.order===s.order))throw Error('Duplicate series order: '+s.slug);
+    group.posts.push(p);
+  }
+  return [...groups.values()].map(g=>({...g,posts:g.posts.sort((a,b)=>a.series.order-b.series.order)})).sort((a,b)=>a.title.localeCompare(b.title,'zh-CN'));
+}
+
