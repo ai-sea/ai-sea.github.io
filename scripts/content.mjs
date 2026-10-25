@@ -11,6 +11,9 @@ export function parsePost(source,slug){
   if(!['实践记录','技术解析','思考随笔'].includes(p.category))throw Error('Unknown category: '+slug);
   if(typeof p.draft!=='boolean'||typeof p.featured!=='boolean')throw Error('draft and featured must be booleans: '+slug);
   if(!Number.isInteger(p.minutes)||p.minutes<1)throw Error('Invalid minutes: '+slug);
+  if(p.cover!==undefined){
+    if(typeof p.cover!=='string'||!/^\/images\/[a-zA-Z0-9/_-]+\.(?:png|jpe?g|webp)$/.test(p.cover)||p.cover.includes('..')||typeof p.coverAlt!=='string'||!p.coverAlt.trim())throw Error('Invalid cover: '+slug);
+  }
   if(p.series!==undefined){
     const s=p.series;
     if(!s||typeof s!=='object'||Array.isArray(s)||typeof s.slug!=='string'||!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(s.slug)||typeof s.title!=='string'||!s.title.trim()||!Number.isSafeInteger(s.order)||s.order<1)throw Error('Invalid series: '+slug);

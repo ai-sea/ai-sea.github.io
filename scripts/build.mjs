@@ -6,14 +6,16 @@ const origin=new URL(config.url).origin;
 const files=(await fs.readdir('content/posts')).filter(f=>f.endsWith('.md'));
 const posts=published(await Promise.all(files.map(async f=>parsePost(await fs.readFile('content/posts/'+f,'utf8'),f.slice(0,-3)))));
 const series=collectSeries(posts);
+for(const p of posts.filter(p=>p.cover))await fs.access('public'+p.cover);
 await fs.rm('dist',{recursive:true,force:true});await fs.mkdir('dist',{recursive:true});
 try{await fs.cp('public','dist',{recursive:true})}catch(e){if(e.code!=='ENOENT')throw e}
 await fs.copyFile('src/style.css','dist/style.css');
 const feature=posts.find(p=>p.featured)||posts[0];if(feature)feature.featured=true;
 let home=await fs.readFile('src/index.html','utf8');
 // Metadata enters HTML only after escaping. JSON uses Unicode escapes to prevent closing script tags.
-const index=posts.map(p=>({...p,title:esc(p.title),desc:esc(p.desc),description:esc(p.description),date:p.date.replaceAll('-','.'),body:[p.html]}));
+const index=posts.map(p=>({...p,title:esc(p.title),desc:esc(p.desc),description:esc(p.description),cover:p.cover?esc(p.cover):undefined,coverAlt:p.cover?esc(p.coverAlt):undefined,date:p.date.replaceAll('-','.'),body:[p.html]}));
 home=home.replace('__POSTS__',()=>JSON.stringify(index).replaceAll('<','\\u003c').replaceAll('>','\\u003e').replaceAll('&','\\u0026'));
+if(feature?.cover)home=home.replace(/<div class="landscape"[^>]*>[\s\S]*?<div class="feature-copy">/,()=>'<div class="feature-cover"><img src="'+esc(feature.cover)+'" alt="'+esc(feature.coverAlt)+'" width="1536" height="1024" fetchpriority="high"></div><div class="feature-copy">');
 home=home.replace('__COUNT__',String(Math.max(0,posts.length-1)).padStart(2,'0'));
 if(feature)home=home.replace('__FEATURE_URL__',feature.url).replace('__FEATURE_TITLE__',esc(feature.title)).replace('__FEATURE_DESC__',esc(feature.description)).replace('__FEATURE_META__',`${feature.date.replaceAll('-','.')} &nbsp; · &nbsp; ${feature.minutes} 分钟阅读`);
 else home=home.replace(/<a href="__FEATURE_URL__"[\s\S]*?<\/a>/,'');
@@ -22,7 +24,7 @@ await fs.writeFile('dist/index.html',home);
 for(const p of posts){
  const dir='dist/posts/'+p.slug;await fs.mkdir(dir,{recursive:true});
  const section=articleSeries(p,series);
- const article=`<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(p.title)} · ${esc(config.title)}</title><meta name="description" content="${esc(p.description)}"><link rel="canonical" href="${origin}${p.url}"><link rel="stylesheet" href="/style.css"></head><body><div class="shell"><header><a class="logo" href="/">${esc(config.title)}<small>${esc(config.subtitle)}</small></a><nav><a href="/#articles">全部文章</a><a href="/series/">系列</a><a href="/#archive">归档</a><a href="/feed.xml">RSS</a></nav></header><main class="article"><a class="meta" href="/#articles">← 返回文章列表</a><p class="tag" style="margin-top:32px">${esc(p.category)}</p><h1>${esc(p.title)}</h1><div class="meta">${p.date} · ${p.minutes} 分钟阅读</div>${section.intro}<div class="article-body">${p.html}</div>${section.navigation}<hr style="border:0;border-top:1px solid var(--line);margin:40px 0"><a href="/#articles">继续阅读其他文章 ↗</a></main><footer>© 2026 ${esc(config.title)} · ${esc(config.subtitle)}<a href="/feed.xml">订阅 RSS</a></footer></div></body></html>`;
+ const article=`<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(p.title)} · ${esc(config.title)}</title><meta name="description" content="${esc(p.description)}">${p.cover?`<meta property="og:image" content="${origin}${esc(p.cover)}"><meta property="og:image:alt" content="${esc(p.coverAlt)}"><meta name="twitter:card" content="summary_large_image">`:''}<link rel="canonical" href="${origin}${p.url}"><link rel="stylesheet" href="/style.css"></head><body><div class="shell"><header><a class="logo" href="/">${esc(config.title)}<small>${esc(config.subtitle)}</small></a><nav><a href="/#articles">全部文章</a><a href="/series/">系列</a><a href="/#archive">归档</a><a href="/feed.xml">RSS</a></nav></header><main class="article"><a class="meta" href="/#articles">← 返回文章列表</a><p class="tag" style="margin-top:32px">${esc(p.category)}</p><h1>${esc(p.title)}</h1><div class="meta">${p.date} · ${p.minutes} 分钟阅读</div>${p.cover?`<img class="article-cover" src="${esc(p.cover)}" alt="${esc(p.coverAlt)}" width="1536" height="1024" fetchpriority="high">`:''}${section.intro}<div class="article-body">${p.html}</div>${section.navigation}<hr style="border:0;border-top:1px solid var(--line);margin:40px 0"><a href="/#articles">继续阅读其他文章 ↗</a></main><footer>© 2026 ${esc(config.title)} · ${esc(config.subtitle)}<a href="/feed.xml">订阅 RSS</a></footer></div></body></html>`;
  await fs.writeFile(dir+'/index.html',article);
 }
 

@@ -5,6 +5,8 @@
   "date": "2026-10-25",
   "description": "为什么还要做 Bots？从一个跨天未完的项目说起，用四张图解释我们对持续工作、记忆与协作的设想。",
   "minutes": 5,
+  "cover": "/images/bots/our-vision-cover.png",
+  "coverAlt": "一个绿色 Bot 沿着跨越时间的光线，将散落的工作卡片连接到有序的成果。",
   "series": {"slug": "building-bots", "title": "从零构建 Bot", "order": 1},
   "featured": false,
   "draft": false
