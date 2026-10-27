@@ -7,7 +7,7 @@
   "minutes": 5,
   "cover": "/images/bots/our-vision-cover.png",
   "coverAlt": "一个绿色 Bot 沿着跨越时间的光线，将散落的工作卡片连接到有序的成果。",
-  "series": {"slug": "building-bots", "title": "从零构建 Bot", "order": 1},
+  "series": {"slug": "building-bots", "title": "30天挑战从零开发AI Agent", "order": 0, "label": "导言"},
   "featured": false,
   "draft": false
 }
@@ -29,7 +29,7 @@ AI 写了代码，启动构建，却在中途需要一个账号、一项确认�
 
 用户可以回来问它：“上次那件事怎么样了？”它能说明已经验证的结果、仍在等待的条件，以及下一步需要谁。
 
-这是 Bot 开发系列的开篇，先讲我们为什么出发。
+这是「30天挑战从零开发AI Agent」的导言，先讲我们为什么出发。
 
 ## 已经有这么多 AI 工具，为什么还想做？
 

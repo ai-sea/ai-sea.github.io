@@ -40,3 +40,15 @@ test('系列文字转义以免插入 HTML',()=>{
  assert.doesNotMatch(section.intro,/<script>|<img/);
  assert.match(section.intro,/&lt;script&gt;/);
 });
+
+test('导言排在第 1 天之前并显示自定义篇目标记',()=>{
+ const intro=post('intro',0,{series:{slug:'bots',title:'Bots',order:0,label:'导言'}});
+ const day=post('day-one',1,{series:{slug:'bots',title:'Bots',order:1,label:'第 1 天'}});
+ const groups=collectSeries([day,intro]);
+ assert.deepEqual(groups[0].posts.map(p=>p.slug),['intro','day-one']);
+ assert.match(seriesContents(groups[0]),/导言/);
+ assert.match(articleSeries(day,groups).intro,/第 1 天/);
+ assert.match(articleSeries(day,groups).navigation,/\/posts\/intro\//);
+ assert.throws(()=>post('bad-intro',0));
+ assert.throws(()=>post('bad-label',1,{series:{slug:'bots',title:'Bots',order:1,label:3}}));
+});

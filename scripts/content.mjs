@@ -16,8 +16,10 @@ export function parsePost(source,slug){
   }
   if(p.series!==undefined){
     const s=p.series;
-    if(!s||typeof s!=='object'||Array.isArray(s)||typeof s.slug!=='string'||!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(s.slug)||typeof s.title!=='string'||!s.title.trim()||!Number.isSafeInteger(s.order)||s.order<1)throw Error('Invalid series: '+slug);
+    if(!s||typeof s!=='object'||Array.isArray(s)||typeof s.slug!=='string'||!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(s.slug)||typeof s.title!=='string'||!s.title.trim()||!Number.isSafeInteger(s.order)||s.order<0)throw Error('Invalid series: '+slug);
   }
+  if(p.series?.label!==undefined&&(typeof p.series.label!=='string'||!p.series.label.trim()||p.series.label.length>40))throw Error('Invalid series label: '+slug);
+  if(p.series?.order===0&&p.series.label!=='导言')throw Error('Order zero is reserved for the introduction: '+slug);
   const html=sanitize(marked.parse(match[2]),{allowedTags:sanitize.defaults.allowedTags.concat(['img']),allowedAttributes:{...sanitize.defaults.allowedAttributes,img:['src','alt','title','width','height','loading']}});
   return {...p,slug,html,url:'/posts/'+slug+'/',cat:p.category,time:p.minutes,desc:p.description,body:[html]};
 }
