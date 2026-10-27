@@ -72,7 +72,7 @@ Agent Loop 可以承载 ReAct 式交互，也可以加入确定性步骤、人�
 
 这里约定适配层返回两种明确输出：`tool_calls` 或 `final`。`final` 是本示例约定的本轮结束信号，不是所有模型协议都自带的统一字段。工程中也可以选择专门的结束工具。
 
-```text
+```pseudocode
 function runTurn(userInput, tools):
     messages = [systemRules, userInput]
 
@@ -273,3 +273,4 @@ Agent Loop 的代码可以很短。我们真正需要逐步验证的是：它在
 6. [LangChain：开源 Agent 运行栈](https://www.langchain.com/oss-overview)，用于了解模型工具循环与底层运行机制的职责划分。
 
 本文为「30天挑战从零开发AI Agent」第 1 天，写于 2026 年 10 月 28 日。“第几天”是系列篇目安排，发布日期以页面标注为准。
+

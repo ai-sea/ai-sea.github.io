@@ -81,3 +81,9 @@ src/index.html 为首页模板，src/style.css 为阅读页样式。site.json �
 ### 导言与挑战天数
 
 系列名称为「30天挑战从零开发AI Agent」，保留既有 building-bots 网址。导言使用 order: 0、label: "导言"；正式文章从 order: 1、label: "第 1 天" 开始。label 为可选显示名，未填写时仍显示「第 N 篇」。序号 0 只用于标为导言的文章，不计入挑战天数；已发布篇数包含导言。30 天是系列主题安排，文章日期按实际发布日填写。
+
+## 阅读页排版
+
+Markdown 表格自动获得表头、行分隔、单元格留白和可聚焦的横向滚动区域。代码块在构建时高亮，支持 JavaScript、TypeScript、Python、JSON、Shell、CSS、HTML/XML、SQL 与 pseudocode（伪代码）。执行记录使用 text；未知语言回退为纯文本。
+
+二、三级标题自动生成本页目录和章节锚点。宽屏在右侧悬浮显示，窄屏通过「本页目录」展开。点击跳转到章节，滚动时标出当前章节，Escape 可收起目录。无脚本时也能展开和跳转。系列目录独立保留。

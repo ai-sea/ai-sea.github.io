@@ -1,5 +1,6 @@
 import { marked } from 'marked';
 import sanitize from 'sanitize-html';
+import {articleRenderer} from './rendering.mjs';
 export const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function parsePost(source,slug){
   if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug))throw Error('Invalid filename: '+slug);
@@ -20,8 +21,11 @@ export function parsePost(source,slug){
   }
   if(p.series?.label!==undefined&&(typeof p.series.label!=='string'||!p.series.label.trim()||p.series.label.length>40))throw Error('Invalid series label: '+slug);
   if(p.series?.order===0&&p.series.label!=='导言')throw Error('Order zero is reserved for the introduction: '+slug);
-  const html=sanitize(marked.parse(match[2]),{allowedTags:sanitize.defaults.allowedTags.concat(['img']),allowedAttributes:{...sanitize.defaults.allowedAttributes,img:['src','alt','title','width','height','loading']}});
-  return {...p,slug,html,url:'/posts/'+slug+'/',cat:p.category,time:p.minutes,desc:p.description,body:[html]};
+  const toc=[];
+  let html=sanitize(marked.parse(match[2],{renderer:articleRenderer(toc)}),{allowedTags:sanitize.defaults.allowedTags.concat(['img']),allowedAttributes:{...sanitize.defaults.allowedAttributes,div:['class'],span:['class'],pre:['class','tabindex','aria-label'],code:['class'],h1:['id'],h2:['id'],h3:['id'],h4:['id'],h5:['id'],h6:['id'],img:['src','alt','title','width','height','loading']}});
+  // 滚动容器保留原生表格语义，并支持键盘聚焦与横向阅读。
+  html=html.replace(/<table>/g,'<div class="table-scroll" role="region" aria-label="表格，可横向滚动" tabindex="0"><table>').replace(/<\/table>/g,'</table></div>');
+  return {...p,slug,html,toc,url:'/posts/'+slug+'/',cat:p.category,time:p.minutes,desc:p.description,body:[html]};
 }
 export function published(posts){
   const result=posts.filter(p=>!p.draft).sort((a,b)=>b.date.localeCompare(a.date));
